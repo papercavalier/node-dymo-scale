@@ -24,8 +24,7 @@
     "url": "https://github.com/papercavalier/node-dymo-scale"
   },
   "dependencies": {
-    "socket.io": "0.9.x",
-    "node-hid": "0.5.1"
+    "node-hid": "^3.0.0"
   },
   "devDependencies": {
     "tap": "0.4.x"
