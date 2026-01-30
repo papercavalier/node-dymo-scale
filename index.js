@@ -52,22 +52,3 @@ var DymoScale = function() {
 }
 
 module.exports = exports = new DymoScale();
-
-
-// var DymoScale = function () {
-
-//   this.read = function (callback) {
-//     // emulate async device read
-//     setTimeout(() => {
-//       const weight = {
-//         value: Math.floor(Math.random() * 1001), // 0–1000
-//         unit: "grams"
-//       };
-
-//       callback(null, weight);
-//     }, 1000); // 1 second
-//   };
-
-// };
-
-// module.exports = exports = new DymoScale();
