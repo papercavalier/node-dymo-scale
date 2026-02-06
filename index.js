@@ -4,18 +4,24 @@ var DymoScale = function() {
   var deviceHandle = null;
 
   this.device = function() {
-    // HACK: cache the device in a variable (deviceHandle)
-    // On some machines (OS X 10.10+ ?) re-opening the same device
-    // results in a "cannot open device" error
-    if(!deviceHandle) {
+    // Cache device handle, but be defensive:
+    // HID paths can become invalid after sleep / reconnect
+    if (!deviceHandle) {
       var devices = HID.devices().filter(function(x) {
         return x.manufacturer === "DYMO";
       });
 
       if (devices.length > 0) {
-        deviceHandle = new HID.HID(devices[0].path);
+        try {
+          deviceHandle = new HID.HID(devices[0].path);
+        } catch (err) {
+          // Path is stale or device is not openable
+          deviceHandle = null;
+          return null;
+        }
       }
     }
+
     return deviceHandle;
   };
 
@@ -25,11 +31,12 @@ var DymoScale = function() {
     if (device) {
       device.read(function(error, data) {
         if (error) {
+          // Device disappeared or became invalid
           deviceHandle = null;
           return callback(error);
         }
 
-        var weight = {value: 0, unit: null};
+        var weight = { value: 0, unit: null };
         var raw = ((256 * data[5]) + data[4]);
 
         if (data[1] === 4) {
@@ -47,8 +54,7 @@ var DymoScale = function() {
     } else {
       callback(new Error("device offline"));
     }
-  }
-
-}
+  };
+};
 
 module.exports = exports = new DymoScale();
